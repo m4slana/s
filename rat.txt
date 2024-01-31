@@ -1,0 +1,1098 @@
+1A
+// Implementacja tablicy dynamicznej obiektow typu Double
+
+public class DynArrayDouble
+{
+    private Double [] table;  //Referencja do tablicy
+    private int nElems;  //Aktualna liczba elementow w tablicy
+
+    public DynArrayDouble(int maxSize)  // Konstruktor
+    {
+        table = new Double[maxSize]; // Tworzymy tablice
+        nElems = 0;               // Na razie brak elementow w tablicy
+    }
+
+    public void add(Double value)    	// Wstawienie elementu do tablicy
+    {
+        if (nElems >= table.length)
+        {
+            Double [] locTable = new Double[table.length*2];
+            for (int i=0; i<table.length; i++) locTable[i]=table[i];
+            // LUB: System.arraycopy(table, 0, locTable, 0, table.length);
+            table = locTable;
+        }
+
+        table[nElems] = value;       	// Wstawiamy element
+        nElems++;                      	// Zwiekszamy licznik elementow
+    }
+
+    public Double get(int index) // Pozyskanie elementu o danym indeksie
+    {
+        return table[index];
+    }
+
+    public int size() // Aktualna liczba elementow w tablicy
+    {
+        return nElems;
+    }
+
+    public boolean remove(int index) 	// Usuniecie elementu o danym indeksie
+    {
+        if (nElems==0 || index>=nElems || index<0)  
+            return false;
+        for (int j = index; j < nElems-1; j++) 	// Przesuwamy pozostale elementy w lewo
+        {
+            table[j] = table[j + 1];
+        }
+        nElems--;                   		// Zmniejszamy licznik elementow
+        return true;
+    }
+
+    public int find(Double searchElem) // Szukanie okreslonego elementu
+    {        
+        for (int j = 0; j < nElems; j++)
+        {
+            if (table[j].doubleValue() == searchElem.doubleValue()) // porownujemy wartosci
+                return j; //Element znaleziono
+        }
+        return -1; // Elementu nie znaleziono
+    }
+
+    public void print()
+    {
+        for (int i = 0; i < nElems; i++) 
+            System.out.print(get(i).toString()+" ");
+        System.out.println();
+    }
+
+    public static void main(String[] args)
+    {
+        int maxSize = 5;
+        DynArrayDouble array = new DynArrayDouble(maxSize);
+        
+        array.add(Double.valueOf(123));
+        array.add(Double.valueOf(234.432));
+        array.add(Double.valueOf(345));
+        array.print();
+        array.remove(1);
+        array.print();
+        array.add(Double.valueOf(555.55));
+        array.print();
+        array.add(Double.valueOf(666.666));
+        array.print();
+        System.out.println(array.find(Double.valueOf(555.55)));
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------
+2A
+//Implementacja uporzadkowanej tablicy dynamicznej Stringow
+
+public class OrdStringDynArray
+{
+    private String [] table;  //Referencja do tablicy
+    private int nElems;  //Aktualna liczba elementow w tablicy
+
+    public OrdStringDynArray(int maxSize)  // Konstruktor
+    {
+        table = new String[maxSize]; // Tworzymy tablice
+        nElems = 0;               // Na razie brak elementow w tablicy
+    }
+
+    public void add(String value)    	// Wstawienie elementu do tablicy
+    {
+        if (nElems >= table.length) //Potrzeba relokacji
+        {
+            String[] locTable = new String[table.length * 2];
+            for (int i = 0; i < table.length; i++)
+                locTable[i] = table[i];
+            table = locTable;
+        }
+
+        int j;
+        for (j = 0; j < nElems; j++)   // Znajdujemy miejsce dla elementu
+            if (table[j].compareTo(value) > 0)
+                break;
+
+        for (int k = nElems; k > j; k--)    // Przesuwamy większe elementy
+            table[k] = table[k - 1];
+
+        table[j] = value;       	// Wstawiamy element
+        nElems++;                      	// Zwiekszamy licznik elementow
+    }
+
+    public String get(int index) // Pozyskanie elementu o danym indeksie
+    {
+        return table[index];
+    }
+
+    public int size() // Aktualna liczba elementow w tablicy
+    {
+        return nElems;
+    }
+
+    public boolean remove(int index) 	// Usuniecie elementu o danym indeksie
+    {
+        if (nElems==0 || index>=nElems || index<0)  
+            return false;
+        for (int j = index; j < nElems - 1; j++) 	// Przesuwamy pozostale elementy w lewo
+            table[j] = table[j + 1];
+        nElems--;                   		// Zmniejszamy licznik elementow
+        return true;
+    }
+
+    public int find(String searchElem) // Szukanie okreslonego elementu
+    {
+        int left = 0;           // ograniczenie lewe
+        int right = nElems - 1; // ograniczenie prawe
+        int currIndex;  // aktualnie sprawdzany indeks
+
+        while (true)
+        {
+            currIndex = (left + right) / 2;
+            if (table[currIndex].equals(searchElem))
+                return currIndex; //Element znaleziony
+            else if (left > right)
+                return -1; //Brak elementu
+            else
+            {
+                if (table[currIndex].compareTo(searchElem) < 0)
+                    left = currIndex + 1; // Jest w górnej połowie tablicy
+                else
+                    right = currIndex - 1; // Jest w dolnej połowie tablicy
+            }
+        }
+    }
+
+    public void print()
+    {
+        for (int i = 0; i < nElems; i++)
+            System.out.print(get(i) + " ");
+        System.out.println();
+    }
+
+    public static void main(String[] args)
+    {
+        int maxSize = 2;
+        OrdStringDynArray array = new OrdStringDynArray(maxSize);
+        array.add("Ola");
+        array.add("Ala");
+        array.add("Tola");
+        array.print();
+        array.remove(1);
+        array.print();
+        array.add("Lolek");
+        array.print();
+
+        int elemIndex = array.find("Tola");
+        System.out.println(elemIndex);
+
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------
+Do 3A i 4A
+public class ListElem
+{
+    public int iData;              // Dana w elemencie listy (liczba calkowita)
+    public ListElem next;          // Referencja do następnego elementu listy
+
+    public ListElem(int iData) // konstruktor
+    {
+        this.iData = iData;   // Inicjalizacja danych
+        next = null; //Pole next ma na poczatku wartosc null
+    }
+
+    public String toString()
+    {
+        return Integer.toString(iData);
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------
+3A
+// lista powiazana dwustronna
+public class FirstLastLinkedList
+{
+    private ListElem first;  // Referencja do pierwszego elementu listy
+    private ListElem last;   // Referencja do ostatniego elementu listy
+
+    public FirstLastLinkedList()  // Konstruktor
+    {
+        first = null;    // Lista nie ma jeszcze elementów
+        last = null;
+    }
+
+    public boolean isEmpty()       // Zwraca true, jeżeli lista jest pusta
+    {        
+        return (first == null);
+    }
+
+    public void insertFirst(int value) // Wstawienie na poczatek listy
+    {
+        ListElem newElem = new ListElem(value);
+        if(isEmpty()) last = newElem;
+        newElem.next = first;
+        first = newElem;
+    }
+
+    public void insertLast(int value)   // Wstawienie na koniec listy
+    {
+        ListElem newElem = new ListElem(value);
+        if (isEmpty()) first = newElem;
+        else last.next = newElem;
+        last = newElem;
+    }
+
+    public ListElem deleteFirst()     // Usunięcie pierwszego elementu listy
+    {
+        if (isEmpty()) return null;
+        ListElem temp = first;
+        if(first.next == null) last = null;
+        first = first.next;
+        return temp;
+    }
+
+// -------------------------------------------------------------
+
+    public void print()
+    {
+        System.out.print("Lista (początek-->koniec): ");
+        ListElem current = first;   // Zaczynamy na początku listy
+        while (current != null)      // Dopóki nie koniec listy...
+        {
+            System.out.print(current.toString()+" ");
+            current = current.next;  // ...przechodzimy do następnego elementu.
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args)
+    {
+        FirstLastLinkedList theList = new FirstLastLinkedList();
+
+        theList.insertFirst(22);       // wstawiamy na początek
+        theList.insertFirst(44);
+        theList.insertFirst(66);
+
+        theList.insertLast(11);        // wstawiamy na koniec
+        theList.insertLast(33);
+        theList.insertLast(55);
+
+        theList.print();         // wypisujemy zawartość listy
+
+        theList.deleteFirst();         // usuwamy pierwsze dwa elementy
+        theList.deleteFirst();
+
+        theList.print();         // wypisujemy ponownie
+
+    }
+}
+
+---------------------------------------------------------------------------------------------------------------------------
+4A
+import java.util.Random;
+
+public class SortedLinkedList
+{
+    private ListElem first;  // Referencja do pierwszego elementu listy
+
+    public SortedLinkedList()  // Konstruktor
+    {
+        first = null;    // Lista nie ma jeszcze elementów
+    }
+
+    public boolean isEmpty()       // Zwraca true, jeżeli lista jest pusta
+    {
+        return (first == null);
+    }
+
+    public void insertFirst(int value)
+    {
+        ListElem newElem = new ListElem(value);
+        newElem.next = first;       // newElem --> dotychczasowy pierwszy element
+        first = newElem;            // first --> newElem
+    }
+
+
+    public void insert(int value)  // Wstawianie z zachowaniem porządku
+    {
+        ListElem newElem = new ListElem(value);
+        ListElem previous = null;
+        ListElem current = first;            // rozpoczynamy od początku listy
+
+        // dopóki nie koniec listy i elementy sa mniejsze niz value
+        while (current != null && newElem.iData > current.iData)
+        {
+            previous = current;
+            current = current.next;   // Przechodzimy do następnego elementu
+        }
+
+        if (previous == null) first = newElem;   // Znalazl na poczatku listy
+        else previous.next = newElem; /// nie na początku...
+        newElem.next = current;
+    }
+
+// -------------------------------------------------------------
+
+    public ListElem find(int elem)     // Wyszukiwanie elementu
+    {
+        if (isEmpty()) return null;
+
+        ListElem current = first;  // Rozpoczynamy od pierwszego elementu
+        while (current.iData != elem)
+        {
+            if (current.next == null) return null;
+            else
+                current = current.next;
+        }
+        return current;
+    }
+// -------------------------------------------------------------
+
+    public ListElem deleteFirst()     // Usunięcie pierwszego elementu listy
+    {
+        if (isEmpty())
+            return null;
+        ListElem temp = first;
+        first = first.next;
+        return temp;
+    }
+
+    public ListElem delete(int elem)    // usuwanie elementu z listy
+    {
+        if (isEmpty()) return null;
+
+        ListElem current = first;
+        ListElem previous = null;
+
+        while (current.iData != elem){
+            if (current.next == null) return null; //Nie znalazl elementu
+            else{
+                previous = current;     // Przechodzimy do następnego elementu
+                current = current.next;
+            }
+        }
+        // Usuwamy znaleziony element
+        if (previous == null)  // jeżeli jest to pierwszy element...
+            first = first.next; // ...zmieniamy pole first
+        else                  // jeżeli nie jest to pierwszy
+            previous.next = current.next;   // Usuwamy aktualny element przez jego pominiecie
+
+        return current; //Zwracamy usuniety element
+    }
+// -------------------------------------------------------------
+
+    public void print()
+    {
+        System.out.print("Lista (początek-->koniec): ");
+        ListElem current = first;   // Zaczynamy na początku listy
+        while (current != null)      // Dopóki nie koniec listy...
+        {
+            System.out.print(current.toString()+" ");
+            current = current.next;  // ...przechodzimy do następnego elementu.
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args)
+    {
+        // Tworzymy listę
+        SortedLinkedList theSortedList = new SortedLinkedList();
+
+        Random rand = new Random();
+        for (int j = 0; j < 10; j++)  // wypełniamy ją elementami losowymi
+        {
+            int number = rand.nextInt(100);
+            theSortedList.insert(number);
+        }
+
+        //Wypisujemy liste
+        theSortedList.print();
+    }
+}
+
+---------------------------------------------------------------------------------------------------------------------------
+5A
+---------------------------------------------------------------------------------------------------------------------------
+Do 6A
+public class IHashTableIterator
+{
+    private IHashTable hashTable; //Tablica mieszjaca dla ktorej jest ten iterator
+    private int size; //Rozmiar tablicy mieszajacej
+    private int listIndex; //Numer aktualnej listy na ktora wskazuje iterator
+    private LinkedListIterator listIterator; //Iterator aktualnej listy na ktora wskazuje iterator tablicy mieszajacej
+
+    public IHashTableIterator(IHashTable hashTable)
+    {
+        this.hashTable = hashTable;
+        listIndex = 0;
+        size = hashTable.size();
+        listIterator = hashTable.getLinkedList(listIndex).iterator();
+    }
+
+    public boolean hasNext() //Sprawdzenie, czy w tablicy mieszajacej jest jeszcze nastepny element
+    {
+        if (listIterator.hasNext()) return true; //Na biezacej liscie jest nastepny element
+
+        int locListIndex = listIndex;
+        LinkedListIterator locListIterator = listIterator;
+        while (true) //Poszukiwanie listy z elementami
+        {
+            locListIndex++;
+            if (locListIndex==size) return false; //Nie znaleziono listy niepustej, zatem brak nastepnego elementu
+            locListIterator = hashTable.getLinkedList(locListIndex).iterator(); //Pobranie iteratora dla kolejnej listy
+            if (locListIterator.hasNext()) return true; //Znalazl sie nastepny element
+        }
+    }
+
+    public ListElem next() //Pobranie kolejnego elementu z tablicy mieszajacej
+    {
+        if (listIterator.hasNext()) //Czy na aktualnej liscie jest nastepny element
+        {
+            return listIterator.next(); //Pobranie kolejnego elementu z biezacej listy
+        }
+        else
+        {
+            while (!listIterator.hasNext()) //Dopoki list jest pusta (poszukowanie listy niepustej)
+            {
+                listIndex++;
+                if (listIndex==size) return null; //Nie znaleziono listy niepustej, zatem brak nastepnego elementu
+                listIterator = hashTable.getLinkedList(listIndex).iterator(); //Pobranie iteratora dla kolejnej listy
+            }
+            return listIterator.next();
+        }
+    }
+    
+}
+
+---------------------------------------------------------------------------------------------------------------------------
+6A
+public class IHashTable
+{
+    private LinkedList [] hashArray;    // tablica mieszajaca
+    private int arraySize; //rozmiar tablicy mieszajacej
+
+    public IHashTable(int size)       // konstruktor
+    {
+        arraySize = size;
+        hashArray = new LinkedList[size];
+
+        for (int i=0; i<size; i++) //Utworzenie pustych list na kazdym miejscu w tablicy mieszajacej
+        {
+            hashArray[i] = new LinkedList();
+        }
+    }
+
+    public LinkedList getLinkedList(int index) //Zwrocenie listy o podanym numerze z tablicy mieszajacej
+    {
+        return hashArray[index];
+    }
+
+    public int size() //Zwrocenie rozmiaru tablicy mieszajacej
+    {
+        return arraySize;
+    }
+
+    private int hashFunc(int elem) // funkcja mieszajaca
+    {
+        return elem % arraySize;
+    }
+
+    public void insert(int data)  // wstaw element do tablicy mieszajacej
+    {
+      int hashVal = hashFunc(data);   // oblicz indeks
+      if (!hashArray[hashVal].find(data)) //Sprawdz czy element jest juz na liscie
+      {
+         hashArray[hashVal].insertFirst(data); // wstaw na liste na pozycji hashVal
+      }
+    }
+
+    public void delete(int elem)       // usuń element z tablicy mieszajacej
+    {
+        int hashVal = hashFunc(elem);   // oblicz indeks
+        hashArray[hashVal].delete(elem); // usuń element listy
+    }
+
+    public boolean find(int elem)   // sprawdz czy element jest w tablicy mieszajacej
+    {
+        int hashVal = hashFunc(elem);   // oblicz indeks
+        return hashArray[hashVal].find(elem);
+    }
+
+
+    public IHashTableIterator iterator() //Utworzenie iteratora
+    {
+       return new IHashTableIterator(this);
+    }
+
+    public void print() //Przegladanie tablicy mieszajacej wraz z wypisywaniem elementow
+    {
+        System.out.print("Tablica mieszajaca:");
+        IHashTableIterator iterator = this.iterator();
+
+        while (iterator.hasNext())      // Dopóki nie koniec elementow
+        {
+            ListElem elem = iterator.next();
+            System.out.print(elem.toString()); // ...wypisujemy dane i...
+            System.out.print(" ");
+        }
+        System.out.println();
+    }
+
+
+    public static void main(String[] args) //test tablicy mieszjacej
+    {
+
+        IHashTable hashTable = new IHashTable(10);
+
+        hashTable.insert(1);
+        hashTable.insert(11);
+        hashTable.insert(2);
+        hashTable.insert(32);
+        hashTable.insert(42);
+        hashTable.insert(3);
+        hashTable.insert(33);
+        hashTable.insert(4);
+
+        hashTable.print();
+
+        boolean result1 = hashTable.find(3);
+        System.out.println("Wynik wyszukiwania 3:"+result1);
+
+        hashTable.delete(3);
+
+        hashTable.print();
+
+        boolean result2 = hashTable.find(3);
+        System.out.println("Wynik wyszukiwania 3:"+result2);
+
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------
+1B
+//Implementacja stosu liczb calkowitych za pomoca tablicy dynamicznej ArrayList przez OSADZANIE
+
+
+public class ArrayListStack
+{
+    private ArrayList<Integer> intStack;
+
+    public ArrayListStack()    // konstruktor
+    {
+        intStack = new ArrayList<Integer>();
+    }
+
+    public void push(int elem)    // odkłada element na szczyt stosu
+    {
+        intStack.add(elem);
+    }
+
+    public int pop() // pobiera element ze szczytu stosu
+    {
+        int topElem = intStack.get(intStack.size()-1); //Pobiera ostatni element tablicy dynamicznej
+        intStack.remove(intStack.size()-1); //usuwa ostatni element
+        return topElem; //Zwraca ostatni element
+    }
+
+    public int peek()  // podgląda wartość na szczycie stosu
+    {
+        return intStack.get(intStack.size()-1); //Zwraca ostatni element
+    }
+
+    public boolean isEmpty()    // zwraca true, jeżeli stos pusty
+    {
+        return intStack.isEmpty();
+    }
+
+    public static void main(String[] args)
+    {
+        ArrayListStack theStack = new ArrayListStack();  // tworzymy nowy stos o rozmiarze 10 (z relokacja)
+        theStack.push(20);     // odkładamy elementy na stosie
+        theStack.push(40);
+        theStack.push(60);
+        theStack.push(80);
+        theStack.push(81);
+
+        while (!theStack.isEmpty())     // dopóki stos nie jest pusty...
+        {                             // ...pobieramy z niego elementy
+            int value = theStack.pop();
+            System.out.println(value+" ");      // wypisanie elementu
+        }
+        System.out.println("");
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------
+2B
+//Implementacja stosu liczb calkowitych za pomoca listy powiazanej LinkedList przez OSADZANIE
+
+
+public class LinkedListStack
+{
+    private LinkedList<Integer> intStack;
+
+    public LinkedListStack()    // konstruktor
+    {
+        intStack = new LinkedList<Integer>();
+    }
+
+    public void push(int elem)    // odkłada element na szczyt stosu
+    {
+        intStack.push(elem);
+    }
+
+    public int pop() // pobiera element ze szczytu stosu
+    {
+        return intStack.pop();
+    }
+
+    public int peek()  // podgląda wartość na szczycie stosu
+    {
+        return intStack.peek();
+    }
+
+    public boolean isEmpty()    // zwraca true, jeżeli stos pusty
+    {
+        return intStack.isEmpty();
+    }
+
+    public static void main(String[] args)
+    {
+        LinkedListStack theStack = new LinkedListStack();
+        theStack.push(20);     // odkładamy elementy na stosie
+        theStack.push(40);
+        theStack.push(60);
+        theStack.push(80);
+
+        while (!theStack.isEmpty())     // dopóki stos nie jest pusty...
+        {                             // ...pobieramy z niego elementy
+            long value = theStack.pop();
+            System.out.print(value+"\n");      // wypisanie elementu
+        }
+        System.out.println("");
+    }
+}
+
+---------------------------------------------------------------------------------------------------------------------------
+3B
+//Implementacja kolejki liczb calkowitych za pomoca klasy ArrayList przez OSADZANIE
+
+import java.util.ArrayList;
+
+
+public class ArrayListQueue
+{
+    private ArrayList<Integer> intQueue;
+
+    public ArrayListQueue()          // konstruktor
+    {
+        intQueue = new ArrayList<Integer>();
+    }
+
+    public void insert(int elem)   // wstawia element na koniec kolejki
+    {
+        intQueue.add(elem);
+    }
+
+    public int remove()         // usuwa element z początku kolejki
+    {
+        int firstElem = intQueue.get(0).intValue();
+        intQueue.remove(0);
+        return firstElem;
+    }
+
+    public int peek()      // podgląda element na początku kolejki
+    {
+        return intQueue.get(0).intValue();
+    }
+
+    public boolean isEmpty()    // zwraca true, jeżeli kolejka pusta
+    {
+        return intQueue.isEmpty();
+    }
+
+    public int size()           // zwraca liczbę elementów w kolejce
+    {
+        return intQueue.size();
+    }
+
+    public static void main(String[] args)
+    {
+        ArrayListQueue theQueue = new ArrayListQueue();  // kolejka pięcioelementowa z relokacja
+
+        System.out.println("Wstawiam: 10");
+        theQueue.insert(10);
+        System.out.println("Wstawiam: 20");
+        theQueue.insert(20);
+        System.out.println("Wstawiam: 30");
+        theQueue.insert(30);
+        System.out.println("Wstawiam: 40");
+        theQueue.insert(40);
+
+        int elem = theQueue.remove();              // usuwamy 3 elementy
+        System.out.println(" Usuwam: "+elem);
+        System.out.println(" Usuwam: "+theQueue.remove());
+        System.out.println(" Usuwam: "+theQueue.remove());
+
+        System.out.println("Wstawiam: 50");
+        theQueue.insert(50);
+        System.out.println("Wstawiam: 60");
+        theQueue.insert(60);
+        System.out.println("Wstawiam: 70");
+        theQueue.insert(70);
+        System.out.println("Wstawiam: 80");
+        theQueue.insert(80);
+
+        while (!theQueue.isEmpty())    // usuwamy i wypisujemy...
+        {                            // ...wszystkie elementy
+            System.out.println(" Usuwam: "+theQueue.remove());
+        }
+        System.out.println("");
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------
+4B
+//Implementacja kolejki liczb calkowitych za pomoca klasy LinkedList przez OSADZANIE
+
+import java.util.LinkedList;
+
+
+public class LinkedListQueue
+{
+
+    private LinkedList<Integer> intQueue;
+
+    public LinkedListQueue()          // konstruktor
+    {
+        intQueue = new LinkedList<Integer>();
+    }
+
+    public void insert(int elem)   // wstawia element na koniec kolejki
+    {
+        intQueue.addLast(elem);
+    }
+
+    public int remove()         // usuwa element z początku kolejki
+    {
+        int firstElem = intQueue.get(0).intValue();
+        intQueue.removeFirst();
+        return firstElem;
+    }
+
+    public int peek()      // podgląda element na początku kolejki
+    {
+        return intQueue.peekFirst().intValue();
+    }
+
+    public boolean isEmpty()    // zwraca true, jeżeli kolejka pusta
+    {
+        return intQueue.isEmpty();
+    }
+
+    public int size()           // zwraca liczbę elementów w kolejce
+    {
+        return intQueue.size();
+    }
+
+    public static void main(String[] args)
+    {
+        LinkedListQueue theQueue = new LinkedListQueue();  // kolejka
+
+        System.out.println("Wstawiam: 10");
+        theQueue.insert(10);
+        System.out.println("Wstawiam: 20");
+        theQueue.insert(20);
+        System.out.println("Wstawiam: 30");
+        theQueue.insert(30);
+        System.out.println("Wstawiam: 40");
+        theQueue.insert(40);
+
+        int elem = theQueue.remove();              // usuwamy 3 elementy
+        System.out.println(" Usuwam: "+elem);
+        System.out.println(" Usuwam: "+theQueue.remove());
+        System.out.println(" Usuwam: "+theQueue.remove());
+
+        System.out.println("Wstawiam: 50");
+        theQueue.insert(50);
+        System.out.println("Wstawiam: 60");
+        theQueue.insert(60);
+        System.out.println("Wstawiam: 70");
+        theQueue.insert(70);
+        System.out.println("Wstawiam: 80");
+        theQueue.insert(80);
+
+        while (!theQueue.isEmpty())    // usuwamy i wypisujemy...
+        {                            // ...wszystkie elementy
+            System.out.println(" Usuwam: "+theQueue.remove());
+        }
+        System.out.println("");
+    }
+}
+
+---------------------------------------------------------------------------------------------------------------------------
+6B
+import java.util.LinkedList;
+
+public class LinkedListList 
+{
+
+    private LinkedList<Object> oList;
+    
+    public LinkedListList()          // konstruktor
+    {
+        oList = new LinkedList<Object>();
+    }
+    
+    public boolean isEmpty()  // spr. czy pusta
+    {
+        return oList.isEmpty();
+    }
+    
+    public void insertFirst(Object elem)  // Wstawienie na poczatek listy
+    {
+        oList.addFirst(elem);
+    }
+    
+    public void insertLast(Object elem)  // Wstawienie na koniec listy
+    {
+        oList.addLast(elem);
+    }
+    
+    public Object deleteFirst()     // Usuniecie pierwszego elementu listy
+    {
+        return oList.removeFirst();
+    }
+    
+    public Object deleteLast()     // Usuniecie ostatniego elementu listy
+    {
+        return oList.removeLast();
+    }
+    
+    public Object getFirst()     // Pobranie pierwszego elementu listy
+    {
+        return oList.getFirst();
+    }
+    
+    public Object getLast()     // Pobranie ostatniego elementu listy
+    {
+        return oList.getLast();
+    }
+    
+    public int size()  // rozmiar listy
+    {
+        return oList.size();
+    }
+    
+    public void print()
+    {
+        for (int i = 0; i < oList.size(); i++) 
+        {
+            System.out.print(oList.get(i)+" ");
+        }
+        System.out.println();
+    }
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) 
+    {
+        LinkedListList theList = new LinkedListList();
+
+        theList.insertFirst(22);       // wstawiamy na poczatek
+        theList.insertFirst(44);
+        theList.insertFirst(66);
+
+        theList.insertLast(11);        // wstawiamy na koniec
+        theList.insertLast(33);
+        theList.insertLast(55);
+
+        theList.print();         // wypisujemy zawartosc listy
+
+        theList.deleteFirst();         // usuwamy pierwsze dwa elementy
+        theList.deleteFirst();
+
+        theList.print();         // wypisujemy ponownie
+
+        theList.deleteLast(); //usuwamy ostatni element
+
+        theList.print();         // wypisujemy ponownie
+    }
+    
+}
+---------------------------------------------------------------------------------------------------------------------------
+8B
+//Implementacja zbioru liczb calkowitych za pomoca klasy TreeSet
+
+import java.util.Iterator;
+import java.util.TreeSet;
+
+
+public class TreeSetSet
+{
+    private TreeSet<Integer> treeSet;
+
+    public TreeSetSet()    // konstruktor
+    {
+        treeSet = new TreeSet<Integer>();        
+    }
+
+    public TreeSet<Integer> getTreeSet() 
+    { 
+        return treeSet; 
+    }
+
+    public int size() //Zwraca liczbe elementow w zbiorze
+    {
+        return treeSet.size();
+    }
+
+    public void insert(int elem)    // wstawia element do zbioru
+    {
+        if (!member(elem)) // sprawdza, czy dany element nalezy do zbioru
+            treeSet.add(elem);            
+    }
+
+    public boolean member(int elem)  // sprawdza, czy dany element nalezy do zbioru
+    {
+        return treeSet.contains(elem);
+    }
+
+    public boolean delete(int elem)  // usuwa element ze zbioru
+    {
+        if (member(elem)) // sprawdza, czy dany element nalezy do zbioru
+        {
+            treeSet.remove(elem);
+            return true;
+        }
+        else return false;
+    }
+
+
+    public TreeSetSet union(TreeSetSet secondSet) //Oblicza sume zbioru biezacego ze zbiorem z parametru metody
+    {
+        TreeSetSet unionSet = new TreeSetSet();
+        Iterator<Integer> iterator = treeSet.iterator();
+        while (iterator.hasNext())
+        {
+            int locElem = iterator.next().intValue();
+            unionSet.insert(locElem);
+        }
+
+        Iterator<Integer> iteratorS = secondSet.getTreeSet().iterator();
+        while (iteratorS.hasNext())
+        {
+            int locElem = iteratorS.next().intValue();
+            unionSet.insert(locElem);
+        }
+
+        return unionSet;
+    }
+
+    public TreeSetSet intersection(TreeSetSet secondSet) //Oblicza iloczyn zbioru biezacego ze zbiorem z parametru metody
+    {
+        TreeSetSet intersectionSet = new TreeSetSet();
+
+        Iterator<Integer> iterator = treeSet.iterator();
+        while (iterator.hasNext())
+        {
+            int locElem = iterator.next().intValue();
+            if (secondSet.member(locElem))
+                intersectionSet.insert(locElem);
+        }
+
+        return intersectionSet;
+    }
+
+    public TreeSetSet difference(TreeSetSet secondSet) //Oblicza roznice zbioru biezacego ze zbiorem z parametru metody
+    {
+        TreeSetSet differenceSet = new TreeSetSet();
+
+        Iterator<Integer> iterator = treeSet.iterator();
+        
+        while (iterator.hasNext())
+        {
+            int locElem = iterator.next().intValue();
+            if (!secondSet.member(locElem))
+                differenceSet.insert(locElem);
+        }
+
+        return differenceSet;
+    }
+
+    public void print()
+    {
+        Iterator<Integer> iterator = treeSet.iterator();
+        while (iterator.hasNext())
+        {
+            int locElem = iterator.next().intValue();
+            System.out.print(locElem+" ");
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args)
+    {
+        TreeSetSet theSetA = new TreeSetSet();  // tworzymy nowy zbior A
+        theSetA.insert(60);     // dodajemy elementy do zbioru
+        theSetA.insert(20);
+        theSetA.insert(40);
+
+        theSetA.print();
+
+        boolean test20 = theSetA.member(20);
+        System.out.println("Wynik testu w zbiorze A dla 20: "+test20);
+
+        theSetA.print();
+
+        boolean test30 = theSetA.member(30);
+        System.out.println("Wynik w zbiorze A pierwszego testu dla 30: "+test30);
+
+        theSetA.insert(30);
+
+        theSetA.print();
+
+        test30 = theSetA.member(30);
+        System.out.println("Wynik w zbiorze A drugiego testu dla 30: "+test30);
+
+        theSetA.delete(30);
+
+        theSetA.print();
+
+        test30 = theSetA.member(30);
+        System.out.println("Wynik w zbiorze A trzeciego testu dla 30: "+test30);
+
+        theSetA.insert(10); //Dodanie jeszcze dwoch elementow
+        theSetA.insert(90);
+
+        System.out.println("--------------------------------------------");
+
+        System.out.println("Zbior A:");
+        theSetA.print();
+
+        TreeSetSet theSetB = new TreeSetSet();  // tworzymy nowy zbior B
+        theSetB.insert(40);     // dodajemy elementy do zbioru
+        theSetB.insert(70);
+        theSetB.insert(60);
+        theSetB.insert(80);
+
+        System.out.println("Zbior B:");
+        theSetB.print();
+
+
+        TreeSetSet unionSet = theSetA.union(theSetB); //Obliczenie sumy zbiorow
+        System.out.println("Suma A i B:");
+        unionSet.print();
+
+        TreeSetSet intersectionSet = theSetA.intersection(theSetB); //Obliczenie iloczynu zbiorow
+        System.out.println("Iloczyn A i B:");
+        intersectionSet.print();
+
+        TreeSetSet differenceSet = theSetA.difference(theSetB); //Obliczenie roznicy zbiorow
+        System.out.println("Roznica A-B:");
+        differenceSet.print();
+        
+        TreeSetSet differenceSet2 = theSetB.difference(theSetA); //Obliczenie roznicy zbiorow
+        System.out.println("Roznica B-A:");
+        differenceSet2.print();
+       
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------
